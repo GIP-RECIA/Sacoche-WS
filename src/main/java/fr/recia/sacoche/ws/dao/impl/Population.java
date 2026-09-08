@@ -15,6 +15,9 @@
  */
 package fr.recia.sacoche.ws.dao.impl;
 
+import lombok.Getter;
+
+@Getter
 public enum Population {
     TEACHER("ENTAuxEnseignant", "Enseignant"),
     STAFF("ENTAuxNonEnsEtab", "Personnel"),
@@ -29,11 +32,4 @@ public enum Population {
         this.label = label;
     }
 
-    public String getObjectClass() {
-        return objectClass;
-    }
-
-    public String getLabel() {
-        return label;
-    }
 }

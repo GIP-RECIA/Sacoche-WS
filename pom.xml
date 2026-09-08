@@ -5,7 +5,7 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>4.1.1</version>
-    <relativePath></relativePath>
+    <relativePath/>
     <!-- lookup parent from repository -->
   </parent>
   <groupId>fr.recia.sacoche.ws</groupId>
@@ -15,12 +15,12 @@
   <name>sacoche-ws</name>
   <description>REST web service for exporting the ENT directory</description>
   <inceptionYear>2026</inceptionYear>
-  <url></url>
+  <url/>
   <licenses>
-    <license></license>
+    <license/>
   </licenses>
   <developers>
-    <developer></developer>
+    <developer/>
   </developers>
   <scm>
     <connection>scm:git:ssh://git@github.com/GIP-RECIA/Sacoche-WS.git</connection>
