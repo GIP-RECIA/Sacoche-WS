@@ -1,3 +1,18 @@
 spring:
   application:
     name: sacoche-ws
+
+app:
+  ldap:
+    url:
+    base:
+    user-dn:
+    password:
+    pooled: false
+    people-root-dn:
+    structure-root-dn:
+    anonymous-read-only: false
+    count-limit: 6000
+    timeout: 15000
+    export-filter:
+    external-id-pattern:
