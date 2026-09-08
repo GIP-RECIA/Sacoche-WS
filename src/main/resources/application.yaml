@@ -3,6 +3,9 @@ spring:
     name: sacoche-ws
 
 app:
+  security:
+    api-key:
+    authorized-ip-access: []
   ldap:
     url:
     base:
