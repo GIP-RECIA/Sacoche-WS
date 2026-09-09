@@ -15,7 +15,6 @@
  */
 package fr.recia.sacoche.ws.config.security;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import fr.recia.sacoche.ws.config.bean.SecurityProperties;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 @Slf4j
 @Service
@@ -32,24 +30,17 @@ import org.springframework.util.Assert;
 public class AuthenticationService {
     private static final String AUTH_TOKEN_HEADER_NAME = "x-api-key";
 
-    private static SecurityProperties securityProperties;
-
     private final SecurityProperties config;
 
-    @PostConstruct
-    private void setUp() {
-        securityProperties = this.config;
-    }
 
-    public static Authentication getAuthentication(HttpServletRequest request) {
-        Assert.notNull(securityProperties, "You have a misconfiguration of the class with the injected bean appConfProperties !");
+    public Authentication getAuthentication(HttpServletRequest request) {
 
         final String apiKey = request.getHeader(AUTH_TOKEN_HEADER_NAME);
-        if (!securityProperties.getApiKey().equals(apiKey)) {
+        if (!config.getApiKey().equals(apiKey)) {
             log.warn("Rejected API call from IP '{}' - invalid API key" , request.getRemoteAddr());
             throw new BadCredentialsException("Invalid API Key");
         }
-        final String clientId = securityProperties.getApiKey();
+        final String clientId = config.getApiKey();
         return new ApiKeyAuthentication(clientId, AuthorityUtils.NO_AUTHORITIES);
     }
 }

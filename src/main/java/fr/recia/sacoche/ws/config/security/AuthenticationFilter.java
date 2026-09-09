@@ -20,21 +20,28 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class AuthenticationFilter extends GenericFilterBean {
+
+    private final AuthenticationService authenticationService;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
         try {
             if (((HttpServletRequest)request).getRequestURI().contains("/api/")) {
-                Authentication authentication = AuthenticationService.getAuthentication((HttpServletRequest) request);
+                Authentication authentication = authenticationService.getAuthentication((HttpServletRequest) request);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (AuthenticationException ex) {
