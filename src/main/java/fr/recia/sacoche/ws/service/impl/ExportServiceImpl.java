@@ -18,17 +18,34 @@ package fr.recia.sacoche.ws.service.impl;
 import fr.recia.sacoche.ws.dao.ILdapDao;
 import fr.recia.sacoche.ws.model.Person;
 import fr.recia.sacoche.ws.service.IExportService;
+import fr.recia.sacoche.ws.service.IUaiGroupService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ExportServiceImpl implements IExportService {
     private final ILdapDao ldapDao;
+    private final IUaiGroupService uaiGroupService;
 
-    public List<Person> exportForUai(final String uai){
-        return ldapDao.findAllForUai(uai);
+    public List<Person> exportForUai(final String uai) {
+        final List<String> uais = uaiGroupService.getGroupedUais(uai);
+        if (uais.size() > 1) {
+            log.debug("uai='{}' belongs to a group, querying {} uais: {}", uai, uais.size(), uais);
+        }
+        final Map<String, Person> result = new LinkedHashMap<>();
+        for (final String uaiToQuery : uais) {
+            for (final Person person : ldapDao.findAllForUai(uaiToQuery)) {
+                result.putIfAbsent(person.getUid(), person);
+            }
+        }
+        return new ArrayList<>(result.values());
     }
 }

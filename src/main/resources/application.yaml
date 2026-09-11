@@ -3,6 +3,8 @@ spring:
     name: sacoche-ws
 
 app:
+  grouping:
+    uai-groups: []
   security:
     api-key:
     authorized-ip-access: []
