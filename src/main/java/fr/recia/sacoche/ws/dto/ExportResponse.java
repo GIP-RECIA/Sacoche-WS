@@ -25,7 +25,7 @@ public class ExportResponse {
     private String lastName;
     private String firstName;
 
-    public ExportResponse(Person person){
+    public ExportResponse(final Person person){
         this.externalId = person.getExternalId();
         this.profile = person.getProfile();
         this.lastName = person.getLastName();

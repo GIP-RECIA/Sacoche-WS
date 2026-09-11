@@ -36,15 +36,29 @@ public class WebSecurityConfiguration {
     private final SecurityProperties securityProperties;
     private final AuthenticationFilter authenticationFilter;
 
-    public WebSecurityConfiguration(SecurityProperties securityProperties, AuthenticationFilter authenticationFilter) {
+    public WebSecurityConfiguration(
+            final SecurityProperties securityProperties,
+            final AuthenticationFilter authenticationFilter
+    ) {
         this.securityProperties = securityProperties;
         this.authenticationFilter = authenticationFilter;
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+    static String buildAccessExpression(final List<String> authorizedIps) {
+        final StringBuilder hasIpAddress = new StringBuilder(
+                "hasIpAddress('127.0.0.1') or hasIpAddress('::1')"
+        );
+        for (final String ip : authorizedIps) {
+            hasIpAddress.append(" or hasIpAddress('").append(ip).append("')");
+        }
 
-        String accessExpression = buildAccessExpression(this.securityProperties.getAuthorizedIpAccess());
+        return "isAuthenticated() and (" + hasIpAddress + ")";
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) {
+
+        final String accessExpression = buildAccessExpression(this.securityProperties.getAuthorizedIpAccess());
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -56,18 +70,6 @@ public class WebSecurityConfiguration {
                 .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
-    }
-
-
-    static String buildAccessExpression(List<String> authorizedIps) {
-        StringBuilder hasIpAddress = new StringBuilder(
-                "hasIpAddress('127.0.0.1') or hasIpAddress('::1')"
-        );
-        for (String ip : authorizedIps) {
-            hasIpAddress.append(" or hasIpAddress('").append(ip).append("')");
-        }
-
-        return "isAuthenticated() and (" + hasIpAddress + ")";
     }
 
 }

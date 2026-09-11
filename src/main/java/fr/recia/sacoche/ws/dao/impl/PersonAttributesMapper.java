@@ -29,22 +29,22 @@ public class PersonAttributesMapper implements ContextMapper<Person> {
     private final String label;
     private final Pattern pattern;
 
-    public PersonAttributesMapper(String label, Pattern pattern){
+    public PersonAttributesMapper(final String label, final Pattern pattern){
         this.label = label;
         this.pattern = pattern;
     }
 
     @Override
-    public Person mapFromContext(@NonNull Object ctx) throws NamingException {
-        DirContextAdapter context = (DirContextAdapter) ctx;
-        String uid = context.getStringAttribute(LdapAttributes.UID);
-        String sn = context.getStringAttribute(LdapAttributes.SN);
-        String givenName = context.getStringAttribute(LdapAttributes.GIVEN_NAME);
-        String[] externalIds = context.getStringAttributes(LdapAttributes.ESCO_PERSON_EXTERNAL_IDS);
+    public Person mapFromContext(@NonNull final Object ctx) throws NamingException {
+        final DirContextAdapter context = (DirContextAdapter) ctx;
+        final String uid = context.getStringAttribute(LdapAttributes.UID);
+        final String sn = context.getStringAttribute(LdapAttributes.SN);
+        final String givenName = context.getStringAttribute(LdapAttributes.GIVEN_NAME);
+        final String[] externalIds = context.getStringAttributes(LdapAttributes.ESCO_PERSON_EXTERNAL_IDS);
         String extractedId = null;
         if(null != externalIds){
             Matcher matcher = null;
-            for(String externalId : externalIds){
+            for(final String externalId : externalIds){
                 matcher = this.pattern.matcher(externalId);
                 if(matcher.matches()){
                     extractedId = matcher.group(1);
@@ -55,7 +55,7 @@ public class PersonAttributesMapper implements ContextMapper<Person> {
         if (null == extractedId){
             return null;
         }
-        Person person = new Person();
+        final Person person = new Person();
         person.setUid(uid);
         person.setExternalId(extractedId);
         person.setProfile(this.label);

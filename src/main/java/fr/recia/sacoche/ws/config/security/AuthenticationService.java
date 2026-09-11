@@ -33,7 +33,7 @@ public class AuthenticationService {
     private final SecurityProperties config;
 
 
-    public Authentication getAuthentication(HttpServletRequest request) {
+    public Authentication getAuthentication(final HttpServletRequest request) {
 
         final String apiKey = request.getHeader(AUTH_TOKEN_HEADER_NAME);
         if (!config.getApiKey().equals(apiKey)) {

@@ -28,7 +28,7 @@ import java.util.List;
 public class ExportServiceImpl implements IExportService {
     private final ILdapDao ldapDao;
 
-    public List<Person> exportForUai(String uai){
+    public List<Person> exportForUai(final String uai){
         return ldapDao.findAllForUai(uai);
     }
 }

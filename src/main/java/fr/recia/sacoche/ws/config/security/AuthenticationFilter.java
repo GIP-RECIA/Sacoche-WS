@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -37,11 +38,11 @@ public class AuthenticationFilter extends GenericFilterBean {
     private final AuthenticationService authenticationService;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain filterChain)
             throws IOException, ServletException {
         try {
-            if (((HttpServletRequest)request).getRequestURI().contains("/api/")) {
-                Authentication authentication = authenticationService.getAuthentication((HttpServletRequest) request);
+            if (((HttpServletRequest) request).getRequestURI().contains("/api/")) {
+                final Authentication authentication = authenticationService.getAuthentication((HttpServletRequest) request);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (AuthenticationException ex) {

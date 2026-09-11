@@ -30,7 +30,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void shouldReturnBadGatewayOnLdapException(){
-        NamingException exception = new CommunicationException(new javax.naming.CommunicationException("connection refused"));
+        final NamingException exception = new CommunicationException(new javax.naming.CommunicationException("connection refused"));
         ResponseEntity<ErrorResponse> response = handler.handleLdapException(exception);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_GATEWAY);
@@ -40,7 +40,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void shouldReturnInternalServerErrorOnUnexpectedException(){
-        Exception exception = new RuntimeException("something broke");
+        final Exception exception = new RuntimeException("something broke");
         ResponseEntity<ErrorResponse> response = handler.handleUnexpected(exception);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
