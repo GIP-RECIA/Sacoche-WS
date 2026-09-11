@@ -26,11 +26,9 @@ import java.util.regex.Pattern;
 
 public class PersonAttributesMapper implements ContextMapper<Person> {
 
-    private final String label;
     private final Pattern pattern;
 
-    public PersonAttributesMapper(final String label, final Pattern pattern){
-        this.label = label;
+    public PersonAttributesMapper(final Pattern pattern){
         this.pattern = pattern;
     }
 
@@ -58,7 +56,6 @@ public class PersonAttributesMapper implements ContextMapper<Person> {
         final Person person = new Person();
         person.setUid(uid);
         person.setExternalId(extractedId);
-        person.setProfile(this.label);
         person.setFirstName(givenName);
         person.setLastName(sn);
         return person;
