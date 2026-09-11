@@ -27,7 +27,7 @@ public class HealthCheckController {
 
     @GetMapping(value = "/health-check")
     @ResponseStatus(HttpStatus.OK)
-    public void healthCheck(HttpServletRequest request, HttpServletResponse response) {
+    public void healthCheck(final HttpServletRequest request, final HttpServletResponse response) {
         log.debug("Doing a health check. Returning HTTP 200, OK");
     }
 }

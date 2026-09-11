@@ -19,6 +19,8 @@ import fr.recia.sacoche.ws.config.bean.LDAPProperties;
 import fr.recia.sacoche.ws.dao.ILdapDao;
 import fr.recia.sacoche.ws.model.Person;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.ldap.NamingException;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.HardcodedFilter;
 import org.springframework.ldap.query.LdapQuery;
@@ -31,34 +33,45 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
-public class LdapDaoImpl implements ILdapDao
-{
+public class LdapDaoImpl implements ILdapDao {
     private final LdapTemplate ldapTemplate;
     private final LDAPProperties ldapProperties;
 
     @Override
-    public List<Person> findAllForUai(String uai) {
-        Map<String, Person> result = new LinkedHashMap<>();
-        Pattern externalIdPattern = Pattern.compile(ldapProperties.getExternalIdPattern());
-        for(Population population: Population.values()){
-            String filter = String.format(ldapProperties.getExportFilter(),uai, population.getObjectClass());
-           LdapQuery query = LdapQueryBuilder
-                   .query()
-                   .base(ldapProperties.getPeopleRootDn())
-                   .attributes(LdapAttributes.PERSON_ATTRS.toArray(new String[0]))
-                   .filter(new HardcodedFilter(filter));
+    public List<Person> findAllForUai(final String uai) {
+        final Map<String, Person> result = new LinkedHashMap<>();
+        final Pattern externalIdPattern = Pattern.compile(ldapProperties.getExternalIdPattern());
+        final PersonAttributesMapper mapper = new PersonAttributesMapper(externalIdPattern);
 
-            PersonAttributesMapper mapper = new PersonAttributesMapper(population.getLabel(), externalIdPattern);
-            List<Person> found = ldapTemplate.search(query, mapper);
-            for(Person person : found){
-                if( null != person){
+        for (final Population population : Population.values()) {
+            final String filter = String.format(ldapProperties.getExportFilter(), uai, population.getObjectClass());
+            final LdapQuery query = LdapQueryBuilder
+                    .query()
+                    .base(ldapProperties.getPeopleRootDn())
+                    .attributes(LdapAttributes.PERSON_ATTRS.toArray(new String[0]))
+                    .filter(new HardcodedFilter(filter));
+
+            final List<Person> found;
+            try {
+                found = ldapTemplate.search(query, mapper);
+            } catch (final NamingException ex) {
+                log.error("LDAP search failed for uai='{}', population='{}', filter='{}'", uai, population.getLabel(), filter);
+                throw ex;
+            }
+            log.debug("LDAP search for uai='{}', population='{}' returned {} entries", uai, population.getLabel(), found.size());
+
+            for (final Person person : found) {
+                if (null != person) {
+                    person.setProfile(population.getLabel());
                     result.putIfAbsent(person.getUid(), person);
                 }
             }
         }
 
+        log.info("Exported {} persons for uai='{}'", result.size(), uai);
         return new ArrayList<>(result.values());
     }
 }

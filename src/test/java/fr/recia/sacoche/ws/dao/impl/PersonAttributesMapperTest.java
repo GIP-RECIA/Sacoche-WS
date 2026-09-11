@@ -50,7 +50,7 @@ class PersonAttributesMapperTest {
         when(context.getStringAttribute(LdapAttributes.GIVEN_NAME)).thenReturn("Jean");
         when(context.getStringAttributes(LdapAttributes.ESCO_PERSON_EXTERNAL_IDS)).thenReturn(new String[]{"DOC$999", "TEST$abc123"});
 
-        PersonAttributesMapper mapper = new PersonAttributesMapper("Élève", Pattern.compile("^TEST\\$(.*)$"));
+        PersonAttributesMapper mapper = new PersonAttributesMapper(Pattern.compile("^TEST\\$(.*)$"));
 
         Person person = mapper.mapFromContext(context);
         assertThat(person.getUid()).isEqualTo("jdupont");
