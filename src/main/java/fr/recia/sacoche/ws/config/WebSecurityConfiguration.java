@@ -15,6 +15,7 @@
  */
 package fr.recia.sacoche.ws.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import fr.recia.sacoche.ws.config.bean.SecurityProperties;
 import fr.recia.sacoche.ws.config.security.AuthenticationFilter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -56,6 +58,14 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            log.warn("Access denied for IP '{}' on '{}'", request.getRemoteAddr(), request.getRequestURI());
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        };
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) {
 
         final String accessExpression = buildAccessExpression(this.securityProperties.getAuthorizedIpAccess());
@@ -67,10 +77,10 @@ public class WebSecurityConfiguration {
                         .requestMatchers("/health-check").permitAll()
                         .requestMatchers("/api/**").access(new WebExpressionAuthorizationManager(accessExpression))
                         .anyRequest().denyAll())
+                .exceptionHandling(handling -> handling.accessDeniedHandler(accessDeniedHandler()))
                 .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
-
 }
 
