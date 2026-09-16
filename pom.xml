@@ -10,7 +10,7 @@
   </parent>
   <groupId>fr.recia.sacoche.ws</groupId>
   <artifactId>sacoche-ws</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>sacoche-ws</name>
   <description>REST web service for exporting the ENT directory</description>
