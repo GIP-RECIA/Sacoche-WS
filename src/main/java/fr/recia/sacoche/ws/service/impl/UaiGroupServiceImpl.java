@@ -30,11 +30,12 @@ public class UaiGroupServiceImpl implements IUaiGroupService {
 
     @Override
     public List<String> getGroupedUais(final String uai) {
+        final String resolvedUai = this.groupingProperties.getFakeMapping().getOrDefault(uai, uai);
         for (final List<String> group : this.groupingProperties.getUaiGroups()) {
-            if (group.contains(uai)) {
+            if (group.contains(resolvedUai)) {
                 return group;
             }
         }
-        return List.of(uai);
+        return List.of(resolvedUai);
     }
 }

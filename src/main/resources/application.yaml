@@ -5,6 +5,9 @@ spring:
 app:
   grouping:
     uai-groups: []
+    fake-mapping: {
+      # "0123456A": "0123456Z"
+    }
   security:
     api-key:
     authorized-ip-access: []
